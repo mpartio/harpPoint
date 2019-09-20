@@ -71,6 +71,8 @@ check_obs_against_fcst <- function(.fcst, parameter, num_sd_allowed = NULL) {
         tolerance_allowed = .data$spread * num_sd_allowed
       )
 
+    tolerance_df <- tolerance_df %>%  dplyr::mutate(SID = as.integer(SID), leadtime = as.numeric(leadtime))
+
     tolerance <- suppressWarnings(suppressMessages(join_to_fcst(
       tolerance,
       tolerance_df,
@@ -80,7 +82,7 @@ check_obs_against_fcst <- function(.fcst, parameter, num_sd_allowed = NULL) {
 
     tolerance <- tolerance[[1]] %>%
       dplyr::mutate_at(
-        dplyr::vars(contains("_mbr")),
+        dplyr::vars(dplyr::contains("_mbr")),
         dplyr::funs(abs(. - !! parameter_quo))
       )
 
