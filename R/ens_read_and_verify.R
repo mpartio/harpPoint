@@ -137,6 +137,16 @@ ens_read_and_verify <- function(
       dplyr::filter(.data$leadtime %in% lead_list[[i]]) %>%
       common_cases()
 
+    if (parameter == "Pmsl") {
+      for (i in 1:length(fcst_model)) {
+        unit <- fcst_data[[fcst_model[i]]][["units"]][[1]]
+
+        if (unit == "Pa") {
+          fcst_data[fcst_model[i]] = scale_point_forecast(fcst_data[fcst_model[i]], 0.01, new_units='hPa', multiplicative=TRUE)
+        }
+      }
+    }
+
     fcst_data <- join_to_fcst(fcst_data, obs_data) %>%
       check_obs_against_fcst(!! parameter_sym, num_sd_allowed = num_sd_allowed)
 
